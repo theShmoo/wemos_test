@@ -10,8 +10,7 @@ static Post post;
 
 static constexpr const char fingerprint[] PROGMEM = "03:D6:42:23:03:D1:0C:06:73:F7:E2:BD:29:47:13:C3:22:71:37:1B";
 
-    void
-    setup()
+void setup()
 {
   my_led = {LED_BUILTIN, ToggleState::Off};
   init(my_led);
