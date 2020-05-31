@@ -18,7 +18,7 @@ struct LED
 };
 
 // initialize the output of the given led
-inline void InitOutput(LED led) { pinMode(led.pin, OUTPUT); }
+inline void init(LED led) { pinMode(led.pin, OUTPUT); }
 
 // toggle the light of the led
 // this modifies the state of the led (off <--> on)
