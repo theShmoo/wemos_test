@@ -4,10 +4,10 @@
 using Pin = uint8_t;
 
 // the state of an led can be turned on or off
-enum class ToggleState
+enum class ToggleState : bool
 {
-  On,
-  Off
+  On = true,
+  Off = false
 };
 
 // a type for a led

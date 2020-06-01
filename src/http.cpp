@@ -2,19 +2,68 @@
 
 #include <WiFiClientSecure.h>
 
-void sendJson(const Post & post)
+static constexpr const size_t MaxMessageLength = 512;
+using Message = char[MaxMessageLength];
+
+size_t requestLine(const Post &post, Message message, size_t currentLength)
+{
+  return currentLength + snprintf_P(message + currentLength,
+                                    MaxMessageLength - currentLength,
+                                    "POST %s HTTP/1.1\n", post.url);
+}
+
+size_t generalHeader(const Post &post, Message message, size_t currentLength)
+{
+  return currentLength + snprintf_P(message + currentLength,
+                                    MaxMessageLength - currentLength,
+                                    "Host: %s\n", post.host);
+}
+
+const char *contentTypeStr(ContentType type)
+{
+  switch (type)
+  {
+  case ContentType::JSON:
+    return "Content-Type: application/json";
+  default:
+    return "";
+  }
+}
+
+size_t entityHeader(const Post &post, Message message, size_t currentLength)
+{
+  return currentLength + snprintf_P(message + currentLength,
+                                    MaxMessageLength - currentLength,
+                                    "%s\nContent-Length: %d\n\n",
+                                    contentTypeStr(post.contentType), strlen(post.message));
+}
+
+int buildMessage(const Post &post, Message message)
+{
+  char *msg = message;
+  auto messageLength = requestLine(post, msg, 0);
+  messageLength = generalHeader(post, msg, messageLength);
+  messageLength = entityHeader(post, msg, messageLength);
+  return messageLength + snprintf_P(msg + messageLength, MaxMessageLength - messageLength, "%s\n", post.message);
+}
+
+void send(const Post &post)
 {
   WiFiClientSecure client;
   client.setFingerprint(post.fingerprint);
   if (client.connect(post.host, post.port))
   {
-    String postMessage = "POST " + post.url + " HTTP/1.1\n";
-    postMessage += "Host: " + post.host + "\n";
-    for (const auto &header : post.header)
-    {
-      postMessage += header.name + ": " + header.value + "\n";
-    }
-    postMessage += "Content-Length: " + String(post.message.length(), 10) + "\n\n" + post.message + "\n";
-    client.print(postMessage);
+    Serial.println("sending data...");
+    Message message;
+    auto messageLength = buildMessage(post, message);
+    Serial.println(message);
+    Serial.printf("Length: %d\n", messageLength);
+    // send
+    auto sendBytes = client.write_P(message, messageLength);
+    Serial.printf("%d data sent\n", sendBytes);
+  }
+  else
+  {
+    Serial.println("could not connect");
   }
 }

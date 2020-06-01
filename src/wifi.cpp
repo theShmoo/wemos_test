@@ -11,6 +11,7 @@ bool isConnected()
 
 void init(const WiFiData & wifi)
 {
+  Serial.println("Connecting to wifi...");
   WiFi.mode(WIFI_STA);
   WiFi.begin(wifi.ssid, wifi.password);
 
@@ -18,4 +19,5 @@ void init(const WiFiData & wifi)
   {
     wait(std::chrono::milliseconds(500));
   }
+  Serial.println("Connected!");
 }

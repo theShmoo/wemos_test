@@ -1,26 +1,23 @@
-#include <WString.h>
-#include <vector>
+#include <stdint.h>
+using Port = uint16_t;
 
-struct Header
+// the type of the content of the request
+enum class ContentType
 {
-  String name;
-  String value;
+  JSON,
+  None
 };
 
+// A structure defining a post http request
 struct Post
 {
-  String host;
-  uint16_t port;
+  const char * host;
+  Port port;
   const char * fingerprint;
-
-  std::vector<Header> header;
-  String url;
-  String message;
+  const char * url;
+  const char * message;
+  ContentType contentType;
 };
 
-inline void addHeader(Post & post, String name, String value)
-{
-  post.header.push_back({name, value});
-}
-
-void sendJson(const Post & post);
+// send the given post request
+void send(const Post & post);

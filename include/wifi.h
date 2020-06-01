@@ -1,9 +1,7 @@
-#include <WString.h>
-
 struct WiFiData
 {
-  String ssid;
-  String password;
+  const char * ssid;
+  const char *password;
 };
 
 bool isConnected();
