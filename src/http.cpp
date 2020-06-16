@@ -3,34 +3,44 @@
 #include <WiFiClientSecure.h>
 
 static constexpr const size_t MaxMessageLength = 512;
+
 using Message = char[MaxMessageLength];
 
-size_t requestLine(const Post &post, Message message, size_t currentLength)
+size_t requestLine(
+    const my::Post &post,
+    Message message,
+    size_t currentLength)
 {
   return currentLength + snprintf_P(message + currentLength,
                                     MaxMessageLength - currentLength,
                                     "POST %s HTTP/1.1\n", post.url);
 }
 
-size_t generalHeader(const Post &post, Message message, size_t currentLength)
+size_t generalHeader(
+    const my::Post &post,
+    Message message,
+    size_t currentLength)
 {
   return currentLength + snprintf_P(message + currentLength,
                                     MaxMessageLength - currentLength,
                                     "Host: %s\n", post.host);
 }
 
-const char *contentTypeStr(ContentType type)
+const char *contentTypeStr(my::ContentType type)
 {
   switch (type)
   {
-  case ContentType::JSON:
+  case my::ContentType::JSON:
     return "Content-Type: application/json";
   default:
     return "";
   }
 }
 
-size_t entityHeader(const Post &post, Message message, size_t currentLength)
+size_t entityHeader(
+    const my::Post &post,
+    Message message,
+    size_t currentLength)
 {
   return currentLength + snprintf_P(message + currentLength,
                                     MaxMessageLength - currentLength,
@@ -38,7 +48,7 @@ size_t entityHeader(const Post &post, Message message, size_t currentLength)
                                     contentTypeStr(post.contentType), strlen(post.message));
 }
 
-int buildMessage(const Post &post, Message message)
+int buildMessage(const my::Post &post, Message message)
 {
   char *msg = message;
   auto messageLength = requestLine(post, msg, 0);
@@ -47,7 +57,7 @@ int buildMessage(const Post &post, Message message)
   return messageLength + snprintf_P(msg + messageLength, MaxMessageLength - messageLength, "%s\n", post.message);
 }
 
-void send(const Post &post)
+void my::send(const Post &post)
 {
   WiFiClientSecure client;
   client.setFingerprint(post.fingerprint);
@@ -55,11 +65,11 @@ void send(const Post &post)
   {
     Serial.println("sending data...");
     Message message;
-    auto messageLength = buildMessage(post, message);
-    Serial.println(message);
-    Serial.printf("Length: %d\n", messageLength);
+    const auto messageLength = buildMessage(post, message);
+    // Serial.println(message);
+    // Serial.printf("Length: %d\n", messageLength);
     // send
-    auto sendBytes = client.write_P(message, messageLength);
+    const auto sendBytes = client.write_P(message, messageLength);
     Serial.printf("%d data sent\n", sendBytes);
   }
   else

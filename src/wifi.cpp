@@ -1,15 +1,14 @@
 #include "wifi.h"
-
 #include "utils.h"
 
 #include <ESP8266WiFi.h>
 
-bool isConnected()
+bool my::isConnected()
 {
   return WiFi.status() == WL_CONNECTED;
 }
 
-void init(const WiFiData & wifi)
+void my::init(const WiFiData &wifi)
 {
   Serial.println("Connecting to wifi...");
   WiFi.mode(WIFI_STA);

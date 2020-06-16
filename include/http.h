@@ -1,23 +1,28 @@
 #include <stdint.h>
-using Port = uint16_t;
+#include <stddef.h>
 
-// the type of the content of the request
-enum class ContentType
+namespace my
 {
-  JSON,
-  None
-};
+  using Port = uint16_t;
 
-// A structure defining a post http request
-struct Post
-{
-  const char * host;
-  Port port;
-  const char * fingerprint;
-  const char * url;
-  const char * message;
-  ContentType contentType;
-};
+  // the type of the content of the request
+  enum class ContentType
+  {
+    JSON,
+    None
+  };
 
-// send the given post request
-void send(const Post & post);
+  // A structure defining a post http request
+  struct Post
+  {
+    const char *host;
+    Port port;
+    const char *fingerprint;
+    const char *url;
+    const char *message;
+    ContentType contentType;
+  };
+
+  // send the given post request
+  void send(const Post &post);
+} // namespace my

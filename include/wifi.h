@@ -1,9 +1,12 @@
-struct WiFiData
+namespace my
 {
-  const char * ssid;
-  const char *password;
-};
+  struct WiFiData
+  {
+    const char *ssid;
+    const char *password;
+  };
 
-bool isConnected();
+  bool isConnected();
 
-void init(const WiFiData &wifi);
+  void init(const WiFiData &wifi);
+} // namespace my

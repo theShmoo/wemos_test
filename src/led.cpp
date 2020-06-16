@@ -1,6 +1,6 @@
 #include "led.h"
 
-void toggle(LED &led)
+void my::toggle(LED &led)
 {
   switch (led.state)
   {
